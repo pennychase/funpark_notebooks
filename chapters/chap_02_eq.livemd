@@ -242,6 +242,10 @@ tea_cup = FunPark.Ride.make("Tea Cup")
 Generate a fast pass for the Dark Mansion:
 
 ```elixir
+
+```
+
+```elixir
 datetime = DateTime.new!(~D[2025-06-01], ~T[13:00:00])
 fast_pass_a = FunPark.FastPass.make(mansion, datetime)
 ```
@@ -429,4 +433,48 @@ fast_pass_rides = [tea_cup]
 rides_completed = [haunted_mansion, tea_cup]
 
 FunPark.List.subset?(fast_pass_rides, rides_completed)
+```
+
+## Exercises
+
+#### Normalize before comparison
+
+We'll use the contramap to pass a normalization function when comparing strings.
+
+```elixir
+normalize_string = fn str -> str |> String.trim |> String.downcase end
+
+eq_normalized = FunPark.Eq.Utils.contramap(normalize_string)
+
+FunPark.Eq.Utils.eq?("  Superman", "SUPERman ", eq_normalized)
+```
+
+#### Transferring tickets
+
+A patron wants to transfer FastPasses to a friend, but only those that are at a different time than the friend's passes.
+
+```elixir
+# First create some passes, using tea_cup, haunted_mansion, and apple_cart as the rides
+# and a variety of datetimes
+
+datetime_a = DateTime.new!(~D[2026-02-28], ~T[13:00:00])
+datetime_b = DateTime.new!(~D[2026-02-28], ~T[14:00:00])
+datetime_c = DateTime.new!(~D[2026-02-28], ~T[15:00:00])
+
+fast_pass_1 = FunPark.FastPass.make(tea_cup, datetime_a)
+fast_pass_2 = FunPark.FastPass.make(tea_cup, datetime_b)
+fast_pass_3 = FunPark.FastPass.make(haunted_mansion, datetime_a)
+fast_pass_4 = FunPark.FastPass.make(apple_cart, datetime_c)
+
+# Alice and Bob
+alice = FunPark.Patron.make("Alice", 15, 53, fast_passes: [fast_pass_1, fast_pass_2])
+bob = FunPark.Patron.make("Bob", 15, 58, fast_passes: [fast_pass_3, fast_pass_4])
+
+# Alice wants to transfer her passes to Bob, but only those at a different time than any
+# of Bob's. Set difference with time equality returns those tickets.
+
+has_eq_time = FunPark.FastPass.eq_time()
+FunPark.List.difference(alice.fast_passes, bob.fast_passes, has_eq_time)
+
+
 ```

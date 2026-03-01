@@ -2,46 +2,50 @@
 
 ## How to Use These Notebooks
 
-1. Click a chapter link below to open the examples in Livebook  
-2. Run code cells with `Ctrl+Enter` or the ▶ button  
-3. Experiment freely — modify examples and see results immediately  
-4. No setup required — everything runs in your browser  
+1. Click a chapter link below to open the examples in Livebook
+2. Run code cells with `Ctrl+Enter` or the ▶ button
+3. Experiment freely — modify examples and see results immediately
+4. No setup required — everything runs in your browser
 
 ## Interactive Chapters
 
-- [Chapter 1: Build FunPark – Model Real-World Data](chap_01_funpark.livemd)  
+* [Chapter 1: Build FunPark – Model Real-World Data](chap_01_funpark.livemd)  
   Define the park domain with rides, patrons, and fast passes
 
-- [Chapter 2: Implement Domain-Specific Equality with Protocols](chap_02_eq.livemd)  
+* [Chapter 2: Implement Domain-Specific Equality with Protocols](chap_02_eq.livemd)  
   Create flexible equality by implementing `Eq`
 
-- [Chapter 3: Create Flexible Ordering with Protocols](chap_03_ord.livemd)  
+* [Chapter 3: Create Flexible Ordering with Protocols](chap_03_ord.livemd)  
   Express comparisons and sorting through `Ord`
 
-- [Chapter 4: Combine with Monoids](chap_04_monoid.livemd)  
+* [Chapter 4: Combine with Monoids](chap_04_monoid.livemd)  
   Explore associative operations and identity elements
 
-- [Chapter 5: Define Logic with Predicates](chap_05_predicate.livemd)  
+* [Chapter 5: Define Logic with Predicates](chap_05_predicate.livemd)  
   Build composable boolean conditions from simple parts
 
-- [Chapter 6: Compose in Context with Monads](chap_06_monad.livemd)  
+* [Chapter 6: Compose in Context with Monads](chap_06_monad.livemd)  
   Learn the fundamentals of sequencing with monads
 
-- [Chapter 7: Access Shared Environment with Reader](chap_07_reader.livemd)  
+* [Chapter 7: Access Shared Environment with Reader](chap_07_reader.livemd)  
   Thread configuration and context without clutter
 
-- [Chapter 8: Manage Absence with Maybe](chap_08_maybe.livemd)  
+* [Chapter 8: Manage Absence with Maybe](chap_08_maybe.livemd)  
   Model optional data safely, avoiding nulls
 
-- [Chapter 9: Model Outcomes with Either](chap_09_either.livemd)  
+* [Chapter 9: Model Outcomes with Either](chap_09_either.livemd)  
   Represent success and failure explicitly
 
-- [Chapter 10: Coordinate Tasks with Effect](chap_10_effect.livemd)  
+* [Chapter 10: Coordinate Tasks with Effect](chap_10_effect.livemd)  
   Combine async operations with error handling
 
 ## Learn More
 
-|                                                                                                    |                                                                                                                                                                              |
-| -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| <img src="https://www.joekoski.com/assets/images/jkelixir_small.jpg" alt="Book cover" width="120"> | For complete explanations, theory, and domain reasoning, see the book:  
-<br/>[Advanced Functional Programming with Elixir](https://pragprog.com/titles/jkelixir/advanced-functional-programming-with-elixir). |
+|     |     |
+| --- | --- |
+
+| <img src="https://www.joekoski.com/assets/images/jkelixir_small.jpg" alt="Book cover" width="120"> | For complete explanations, theory, and domain reasoning, see the book:
+
+<br />
+
+[Advanced Functional Programming with Elixir](https://pragprog.com/titles/jkelixir/advanced-functional-programming-with-elixir). |
