@@ -411,3 +411,117 @@ And with `reverse/1`, we can invert the logic so higher ticket tiers come first:
 reverse_ticket_ord = FunPark.Ord.Utils.reverse(ticket_ord)
 FunPark.List.sort([alice, beth], reverse_ticket_ord)
 ```
+
+## Exercises
+
+#### Patron ordered by reward points
+
+Use contramap to order patrons by reward points. If this was in the code, it would be defined as named functions with the Patron module, but we have to define as anonymous functions.
+
+<!-- livebook:{"force_markdown":true} -->
+
+```elixir
+defp get_reward_points(%__MODULE__{reward_points: reward_points}), do: reward_points
+
+def ord_by_reward_points, do: FunPark.Ord.Utils(&get_reward_points/1)
+```
+
+```elixir
+get_reward_points = fn %FunPark.Patron{reward_points: reward_points} -> reward_points end
+
+ord_by_reward_points = fn -> FunPark.Ord.Utils.contramap(get_reward_points) end
+  
+```
+
+So, now we'll create two patrons and compare them by the default (name) and the reward_point order.
+
+```elixir
+alice = FunPark.Patron.make("Alice", 14, 140, ticket_tier: :vip, reward_points: 50)
+beth = FunPark.Patron.make("Beth", 15, 130, ticket_tier: :premium, reward_points: 20)
+
+reward_points_ord = ord_by_reward_points.()
+
+{ FunPark.Ord.lt?(alice, beth), reward_points_ord.lt?.(alice, beth) }
+
+
+```
+
+#### Rides ordered by wait time
+
+The code in ride.ex defines the access and ordering functions, so we'll create a couple of rides and demonstrate the default orders and the wait time order.
+
+```elixir
+tea_cup = FunPark.Ride.make("Tea Cup", wait_time: 10)
+mansion = FunPark.Ride.make("Haunted Mansion", wait_time: 20)
+
+wait_time_ord = FunPark.Ride.ord_by_wait_time()
+
+{ FunPark.Ord.gt?(tea_cup, mansion), wait_time_ord.gt?.(tea_cup, mansion)}
+```
+
+#### Macros
+
+I can't define the eq_for macro, because (1) the FunPark modules are closed and I can't introduce new functions in the LiveBook, and (2) Eq for the different structs are already defined, and eq_for/2 is already defined in FunPark.Macros.
+
+This is the code that will go in FunPark.Macros:
+
+<!-- livebook:{"force_markdown":true} -->
+
+```elixir
+defmodule FunPark.Macros do
+  defmacro eq_for(for_struct, field) do
+    quote do
+      alias FunPark.Eq
+  
+      defimpl Exercise.Eq, for: unquote(for_struct) do
+        def eq?(
+          %unquote(for_struct){unquote(field) => v1},
+          %unquote(for_struct){unquote(field) => v2}
+        ),
+        do: Eq.eq?(v1, v2)
+
+        def not_eq?(
+          %unquote(for_struct){unquote(field) => v1},
+          %unquote(for_struct){unquote(field) => v2}
+        ),
+        do: Eq.not_eq?(v1, v2)
+      end
+    end
+  end
+end
+```
+
+If we want to define the main Eq for a struct, we need to include `require FunPark.Macros` or `import FunPark.Macros` in the struct's module, and then invoke the macros, e.g., for Patron: `eq_for(FunPark.Patron, :name)`
+
+<!-- livebook:{"break_markdown":true} -->
+
+#### Implement helper functions based on Ord
+
+The FunPark code includes max and min, so define them in a module so we can pass the irdering optional argument.
+
+```elixir
+defmodule Exercise do
+  import FunPark.Ord.Utils, only: [compare: 3]
+
+  alias FunPark.Ord
+  
+  def max(x, y, ord \\ Ord) do
+    case compare(x, y, ord) do
+      :lt -> y
+      _ -> x
+    end
+  end
+
+  def min(x, y, ord \\ Ord) do
+    case compare(x, y, ord) do
+      :gt -> y
+      _ -> x
+    end
+  end
+end
+
+```
+
+```elixir
+{Exercise.max(tea_cup, mansion), Exercise.min(tea_cup, mansion), Exercise.min(tea_cup, mansion, wait_time_ord)}
+```
