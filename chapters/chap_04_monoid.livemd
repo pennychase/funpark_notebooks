@@ -592,3 +592,119 @@ If there are no patrons, the sentinel value is returned:
 ```elixir
 FunPark.Patron.highest_priority([])
 ```
+
+## Exercises
+
+#### Build a Product monoid
+
+Numbers have different monoids for different operators/identities. The book implemented a Sum monoid, and following that pattern, we'll implement the Product monoid. We define the struct and the implement the Monoid protocol: empty(), append(), wrap(), and unwrap().
+
+Since the code already exists in the project that is used in the LiveBook setup, we can't redefine it.
+
+<!-- livebook:{"force_markdown":true} -->
+
+```elixir
+
+# This is in lib/fun_park/monoid/product.ex
+
+defmodule FunPark.Monoid.Product do
+  defstruct value: 0
+end
+
+defimpl FunPark.Monoid, for: FunPark.Monoid.Product do
+  alias FunPark.Monoid.Product
+
+  def empty(_), do: %Product{}
+
+  def append(%Product{value: x}, %Product{value: y}) do
+    %Product{value: x + y}
+  end
+
+  def wrap(%Product{}, value) when is_number(value), do: %Product{value: value}
+
+  def unwrap(%Product{value: value}) when is_number(value), do: value
+
+end
+```
+
+```elixir
+# We can create values direcly or use FunPark.Monoid.wrap (since we've implemented the protocol)
+
+%FunPark.Monoid.Product{value: 20}
+
+FunPark.Monoid.wrap(%FunPark.Monoid.Product{}, 2)
+```
+
+```elixir
+prod_1 = FunPark.Monoid.wrap(%FunPark.Monoid.Product{}, 4)
+prod_2 = FunPark.Monoid.wrap(%FunPark.Monoid.Product{}, 5)
+prod_3 = FunPark.Monoid.wrap(%FunPark.Monoid.Product{}, 6)
+
+IO.inspect FunPark.Monoid.empty(%FunPark.Monoid.Product{})  # empty
+
+IO.inspect FunPark.Monoid.append(prod_1, prod_2)  # append two Products
+
+```
+
+```elixir
+# We get m_append and m_concat for free
+
+IO.inspect FunPark.Monoid.Utils.m_append(%FunPark.Monoid.Product{}, 4, 5)  # Hide wrap and unwrap
+
+IO.inspect FunPark.Monoid.Utils.m_concat(%FunPark.Monoid.Product{}, [2,3,4])
+```
+
+#### Implement Min monoid
+
+Again, this is already implemented
+
+<!-- livebook:{"force_markdown":true} -->
+
+```elixir
+# This is in lib/fun_park/monoid/min.ex
+
+defmodule FunPark.Monoid.Min do
+  defstruct value: nil, ord: FunPark.Ord
+end
+
+defimpl FunPark.Monoid, for: FunPark.Monoid.Min do
+
+  alias FunPark.Monoid.Min
+
+  def empty(%Min{value: min, ord: ord}) do
+    %Min{value: min,ord: ord)
+  end
+
+  def append(%Min{value: x, ord: ord}, %Min{value: y}) do
+    %Min{value: Utils.min(x, y, ord), ord: ord}
+  end
+
+  def wrap(%Min{ord: ord}, value) do
+    %Min{value: value, ord: Utils.to_ord_map(ord)}
+  end
+
+  def unwrap(%Min{value: value}), do: value
+end
+
+# Abstract the details in lib/fun_park/math.ex
+
+def min(x, y) do
+  m_append(%Monoid.Min{value: Float.max_finite()}, x, y)
+end
+
+def min(list) when is_list(list) do
+  m_concat(%Monoid.Min{value: Float.max_finite()}, list)
+
+```
+
+```elixir
+# Using full append and the convenience function on two arguments and list of arguments
+
+IO.inspect FunPark.Monoid.append(%FunPark.Monoid.Min{value: 2}, %FunPark.Monoid.Min{value: -1})
+
+IO.inspect FunPark.Math.min(42, 108)
+
+IO.inspect FunPark.Math.min([3.14, 1, 80])
+
+IO.inspect FunPark.Math.min([])
+```
